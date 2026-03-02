@@ -17,7 +17,7 @@ extension ToolMacro: MemberMacro {
 			context.diagnose(.init(
 				node: node,
 				message: DiagnosticMessage(
-					message: "@Tool can only be applied to structs",
+					message: "@ChatCompletionsTool can only be applied to structs",
 					diagnosticID: MessageID(domain: "SwiftChatCompletionsMacros", id: "toolNotAStruct"),
 					severity: .error
 				)
@@ -97,7 +97,7 @@ extension ToolMacro: ExtensionMacro {
 		}
 
 		let ext: DeclSyntax = """
-			extension \(type.trimmed): Tool {}
+			extension \(type.trimmed): ChatCompletionsTool {}
 			"""
 		return [ext.cast(ExtensionDeclSyntax.self)]
 	}

@@ -8,23 +8,23 @@ Generate OpenAI-compatible JSON Schema definitions at compile time using Swift m
 
 ### Macros
 
-#### `@Generable`
+#### `@ChatCompletionsToolArguments`
 
 - **Applies to**: Structs only
 - **Role**: `@attached(member)` + `@attached(extension)`
-- **Generates**: `static var jsonSchema: JSONSchemaValue` member, plus `Generable`, `Codable`, `Sendable` conformance
-- **Reads**: `@Guide` attributes from stored properties to enrich schema
+- **Generates**: `static var jsonSchema: JSONSchemaValue` member, plus `ChatCompletionsToolArguments`, `Codable`, `Sendable` conformance
+- **Reads**: `@ChatCompletionsToolGuide` attributes from stored properties to enrich schema
 - **Error**: Emits compile-time diagnostic if applied to non-struct
 
-#### `@Tool`
+#### `@ChatCompletionsTool`
 
 - **Applies to**: Structs only
 - **Role**: `@attached(member)` + `@attached(extension)` + `@attached(peer)`
-- **Generates**: `static let name: String`, `static let description: String`, `static var toolDefinition: ToolDefinition`, plus `Tool` conformance
+- **Generates**: `static let name: String`, `static let description: String`, `static var toolDefinition: ToolDefinition`, plus `ChatCompletionsTool` conformance
 - **Reads**: Doc comments from struct declaration for description, struct name for tool name (PascalCase to snake_case)
 - **Error**: Emits compile-time diagnostic if applied to non-struct
 
-#### `@Guide`
+#### `@ChatCompletionsToolGuide`
 
 - **Applies to**: Stored properties
 - **Role**: `@attached(peer)` (marker only)
@@ -60,13 +60,13 @@ Wraps a `String` content result from a tool call.
 
 ### Protocols
 
-#### `Generable: Codable, Sendable`
+#### `ChatCompletionsToolArguments: Codable, Sendable`
 
 Requires `static var jsonSchema: JSONSchemaValue`.
 
-#### `Tool: Sendable`
+#### `ChatCompletionsTool: Sendable`
 
-Requires `associatedtype Arguments: Generable`, `name`, `description`, `toolDefinition`, `call(arguments:)`.
+Requires `associatedtype Arguments: ChatCompletionsToolArguments`, `name`, `description`, `toolDefinition`, `call(arguments:)`.
 
 ### Supported Swift Types
 
@@ -78,12 +78,12 @@ Requires `associatedtype Arguments: Generable`, `name`, `description`, `toolDefi
 | `Bool` | `{"type": "boolean"}` |
 | `T?` | Same as T, excluded from required |
 | `[T]` | `{"type": "array", "items": ...}` |
-| Nested `@Generable` | Delegates to nested type's `jsonSchema` |
+| Nested `@ChatCompletionsToolArguments` | Delegates to nested type's `jsonSchema` |
 
 ### Error Diagnostics
 
-- `@Generable` on non-struct: "@Generable can only be applied to structs"
-- `@Tool` on non-struct: "@Tool can only be applied to structs"
+- `@ChatCompletionsToolArguments` on non-struct: "@ChatCompletionsToolArguments can only be applied to structs"
+- `@ChatCompletionsTool` on non-struct: "@ChatCompletionsTool can only be applied to structs"
 
 ---
 
@@ -100,7 +100,7 @@ The plugin registers three macro types — `GenerableMacro`, `ToolMacro`, and `G
 GenerableMacro conforms to two macro protocols:
 
 - **MemberMacro** generates a `static var jsonSchema: JSONSchemaValue` computed property that returns an `.object(properties:required:)` value. This is the core schema generation.
-- **ExtensionMacro** generates an extension adding `Generable`, `Codable`, and `Sendable` conformance.
+- **ExtensionMacro** generates an extension adding `ChatCompletionsToolArguments`, `Codable`, and `Sendable` conformance.
 
 Both conformances first validate that the declaration is a struct, emitting a diagnostic and returning empty if not.
 
@@ -119,7 +119,7 @@ Optional properties are excluded from the `required` array but still appear in `
 
 #### Guide Attribute Reading
 
-For each stored property's `VariableDeclSyntax`, the macro walks the `attributes` list looking for an `AttributeSyntax` whose `attributeName` is an `IdentifierTypeSyntax` with name `"Guide"`. When found, it parses the labeled argument list:
+For each stored property's `VariableDeclSyntax`, the macro walks the `attributes` list looking for an `AttributeSyntax` whose `attributeName` is an `IdentifierTypeSyntax` with name `"ChatCompletionsToolGuide"`. When found, it parses the labeled argument list:
 
 - An argument labeled `"description"` with a `StringLiteralExprSyntax` value provides the schema description.
 - An unlabeled argument (or one labeled `"_"`) is parsed as a constraint.
@@ -137,7 +137,7 @@ The mapping from Swift type names to schema expressions follows a decision table
 | `"Double"` | `.number()` with optional description and min/max from `.doubleRange` constraint |
 | `"Bool"` | `.boolean()` with optional description |
 | `"[T]"` (starts with `[`, ends with `]`) | `.array(items: <recursive mapping of T>)` |
-| Any other type name | `TypeName.jsonSchema` — delegates to the nested Generable type's static property |
+| Any other type name | `TypeName.jsonSchema` — delegates to the nested ChatCompletionsToolArguments type's static property |
 
 #### Generated Output Shape
 
@@ -155,7 +155,7 @@ public static var jsonSchema: JSONSchemaValue {
 The ExtensionMacro produces:
 
 ```
-extension TypeName: Generable, Codable, Sendable {}
+extension TypeName: ChatCompletionsToolArguments, Codable, Sendable {}
 ```
 
 ### ToolMacro
@@ -163,7 +163,7 @@ extension TypeName: Generable, Codable, Sendable {}
 ToolMacro conforms to three macro protocols:
 
 - **MemberMacro** generates `name`, `description`, and `toolDefinition` static members.
-- **ExtensionMacro** generates an extension adding `Tool` conformance.
+- **ExtensionMacro** generates an extension adding `ChatCompletionsTool` conformance.
 - **PeerMacro** is available for future free-function support but currently returns empty.
 
 #### Name Derivation
@@ -213,12 +213,12 @@ public static var toolDefinition: ToolDefinition {
 The ExtensionMacro produces:
 
 ```
-extension TypeName: Tool {}
+extension TypeName: ChatCompletionsTool {}
 ```
 
 ### GuideMacro
 
-GuideMacro conforms to `PeerMacro` and returns an empty array from its expansion method. It is a marker macro — it generates no code. Its sole purpose is to be readable by `@Generable` during sibling property inspection. See [DesignRationale.md](DesignRationale.md) for why this pattern is used.
+GuideMacro conforms to `PeerMacro` and returns an empty array from its expansion method. It is a marker macro — it generates no code. Its sole purpose is to be readable by `@ChatCompletionsToolArguments` during sibling property inspection. See [DesignRationale.md](DesignRationale.md) for why this pattern is used.
 
 ### Types Encoding Design
 
@@ -247,4 +247,4 @@ Swift's `Encodable` cannot directly encode `[String: Any]` dictionaries. The `An
 - **Line vs block doc comments**: Both `///` line comments and `/** */` block comments are collected and handled uniformly after prefix/suffix stripping.
 - **Parameter doc stopping**: Description extraction stops at `"- Parameter"` or `"- Returns"` lines to avoid including structured documentation in the tool description.
 - **String literal escaping**: Backslashes, double quotes, and newlines in doc comments must be escaped before embedding in generated string literals.
-- **Default description fallback**: If no doc comment is present on a `@Tool` struct, the description falls back to `"No description provided."` rather than failing.
+- **Default description fallback**: If no doc comment is present on a `@ChatCompletionsTool` struct, the description falls back to `"No description provided."` rather than failing.

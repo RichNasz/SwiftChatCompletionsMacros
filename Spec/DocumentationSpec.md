@@ -10,7 +10,7 @@ The README must contain these sections in this exact order:
 2. **Overview** (H2)
 3. **Quick Start** (H2) — Installation + Basic Usage subsections
 4. **Supported Types** (H2)
-5. **@Guide Constraints** (H2)
+5. **@ChatCompletionsToolGuide Constraints** (H2)
 6. **Requirements** (H2)
 7. **Contributing** (H2)
 8. **License** (H2)
@@ -34,8 +34,8 @@ Update version numbers when requirements change.
 The Quick Start code example must:
 
 - Be a single, self-contained code block that compiles
-- Demonstrate `@Generable` with `@Guide` descriptions
-- Demonstrate `@Tool` with doc comment and `Arguments` typealias
+- Demonstrate `@ChatCompletionsToolArguments` with `@ChatCompletionsToolGuide` descriptions
+- Demonstrate `@ChatCompletionsTool` with doc comment and `Arguments` typealias
 - Show `toolDefinition` encoding to JSON
 - Include at least one optional property (to show `required` field behavior)
 
@@ -67,11 +67,11 @@ CLAUDE.md is the AI's entry point to the codebase. It should contain enough cont
 
 The example file must show:
 
-- `@Generable` struct with `@Guide` descriptions on properties
-- `@Tool` struct with doc comment, `Arguments` typealias, and `call` method
+- `@ChatCompletionsToolArguments` struct with `@ChatCompletionsToolGuide` descriptions on properties
+- `@ChatCompletionsTool` struct with doc comment, `Arguments` typealias, and `call` method
 - Using `toolDefinition` to encode JSON
 - Multiple tools (at least 2)
-- Nested `@Generable` types
+- Nested `@ChatCompletionsToolArguments` types
 
 ### File Header
 

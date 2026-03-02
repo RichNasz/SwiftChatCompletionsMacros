@@ -23,17 +23,17 @@ Used for runtime type tests via `@Test` and `#expect`.
 Every macro must have expansion tests verifying the generated code is syntactically correct and semantically complete.
 
 Required coverage:
-- `@Generable` with each primitive type (`String`, `Int`, `Double`, `Bool`)
-- `@Generable` with optional properties (excluded from `required`)
-- `@Generable` with array properties
-- `@Generable` with nested `@Generable` types
-- `@Guide` with `description` parameter
-- `@Guide` with each constraint type (`.anyOf`, `.range`, `.doubleRange`, `.count`, `.minimumCount`, `.maximumCount`)
-- `@Tool` struct expansion (name, description, toolDefinition)
-- `@Tool` PascalCase-to-snake_case name conversion
-- `@Tool` doc comment extraction for description
-- Error diagnostic when `@Generable` applied to non-struct
-- Error diagnostic when `@Tool` applied to non-struct
+- `@ChatCompletionsToolArguments` with each primitive type (`String`, `Int`, `Double`, `Bool`)
+- `@ChatCompletionsToolArguments` with optional properties (excluded from `required`)
+- `@ChatCompletionsToolArguments` with array properties
+- `@ChatCompletionsToolArguments` with nested `@ChatCompletionsToolArguments` types
+- `@ChatCompletionsToolGuide` with `description` parameter
+- `@ChatCompletionsToolGuide` with each constraint type (`.anyOf`, `.range`, `.doubleRange`, `.count`, `.minimumCount`, `.maximumCount`)
+- `@ChatCompletionsTool` struct expansion (name, description, toolDefinition)
+- `@ChatCompletionsTool` PascalCase-to-snake_case name conversion
+- `@ChatCompletionsTool` doc comment extraction for description
+- Error diagnostic when `@ChatCompletionsToolArguments` applied to non-struct
+- Error diagnostic when `@ChatCompletionsTool` applied to non-struct
 
 ### Tier 2: Important — Runtime Encoding Tests
 

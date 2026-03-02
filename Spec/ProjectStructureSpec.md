@@ -26,14 +26,14 @@ SwiftChatCompletionsMacros/
 │   └── TestingSpec.md                    # Testing philosophy
 ├── Sources/
 │   ├── SwiftChatCompletionsMacros/       # Public API (library target)
-│   │   ├── Macros.swift                  # @Tool, @Generable, @Guide declarations
-│   │   ├── Protocols.swift               # Generable, Tool protocols
+│   │   ├── Macros.swift                  # @ChatCompletionsTool, @ChatCompletionsToolArguments, @ChatCompletionsToolGuide declarations
+│   │   ├── Protocols.swift               # ChatCompletionsToolArguments, ChatCompletionsTool protocols
 │   │   └── Types.swift                   # JSONSchemaValue, ToolDefinition, etc.
 │   └── SwiftChatCompletionsMacrosPlugin/ # Compiler plugin (macro target)
 │       ├── Plugin.swift                  # CompilerPlugin entry point
-│       ├── GenerableMacro.swift          # @Generable schema generation
-│       ├── ToolMacro.swift               # @Tool definition generation
-│       └── GuideMacro.swift              # @Guide marker macro
+│       ├── GenerableMacro.swift          # @ChatCompletionsToolArguments schema generation
+│       ├── ToolMacro.swift               # @ChatCompletionsTool definition generation
+│       └── GuideMacro.swift              # @ChatCompletionsToolGuide marker macro
 ├── Tests/
 │   └── SwiftChatCompletionsMacrosTests/
 │       ├── SwiftChatCompletionsMacrosTests.swift  # Macro expansion tests (XCTest)
@@ -67,7 +67,7 @@ Tests for both macro expansion correctness and runtime type behavior. Uses two t
 | Content | Target | Rationale |
 |---|---|---|
 | Macro declarations (`@attached(...)`) | Library | Users need these in scope to use macros |
-| Protocols (`Generable`, `Tool`) | Library | Users conform to these protocols |
+| Protocols (`ChatCompletionsToolArguments`, `ChatCompletionsTool`) | Library | Users conform to these protocols |
 | Runtime types (`JSONSchemaValue`, `ToolDefinition`) | Library | Users create, encode, and pass these types |
 | Macro implementations (`MemberMacro`, `ExtensionMacro`) | Plugin | Compiler-loaded, not user-visible |
 | AST parsing and code generation | Plugin | Depends on swift-syntax |

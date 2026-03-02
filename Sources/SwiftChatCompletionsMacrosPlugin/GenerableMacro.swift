@@ -17,7 +17,7 @@ extension GenerableMacro: MemberMacro {
 			context.diagnose(.init(
 				node: node,
 				message: DiagnosticMessage(
-					message: "@Generable can only be applied to structs",
+					message: "@ChatCompletionsToolArguments can only be applied to structs",
 					diagnosticID: .init(domain: "SwiftChatCompletionsMacros", id: "notAStruct"),
 					severity: .error
 				)
@@ -70,7 +70,7 @@ extension GenerableMacro: ExtensionMacro {
 		}
 
 		let ext: DeclSyntax = """
-			extension \(type.trimmed): Generable, Codable, Sendable {}
+			extension \(type.trimmed): ChatCompletionsToolArguments, Codable, Sendable {}
 			"""
 		return [ext.cast(ExtensionDeclSyntax.self)]
 	}
@@ -155,7 +155,7 @@ private func extractGuide(from attributes: AttributeListSyntax) -> (String?, Con
 	for attribute in attributes {
 		guard let attr = attribute.as(AttributeSyntax.self),
 			  let identType = attr.attributeName.as(IdentifierTypeSyntax.self),
-			  identType.name.text == "Guide",
+			  identType.name.text == "ChatCompletionsToolGuide",
 			  let arguments = attr.arguments?.as(LabeledExprListSyntax.self)
 		else {
 			continue

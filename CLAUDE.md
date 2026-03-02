@@ -2,7 +2,7 @@
 
 ## Project Overview
 
-SwiftChatCompletionsMacros is a Swift Package Manager project that provides compile-time Swift macros (`@Tool`, `@Generable`, `@Guide`) for generating OpenAI-compatible JSON Schema definitions. It brings Apple FoundationModels tool-calling style to any OpenAI-compatible `/chat/completions` endpoint.
+SwiftChatCompletionsMacros is a Swift Package Manager project that provides compile-time Swift macros (`@ChatCompletionsTool`, `@ChatCompletionsToolArguments`, `@ChatCompletionsToolGuide`) for generating OpenAI-compatible JSON Schema definitions. It is the compile-time companion to SwiftChatCompletionsDSL, with naming designed to avoid conflicts with Apple FoundationModels.
 
 ## Commands
 
@@ -17,8 +17,8 @@ SwiftChatCompletionsMacros is a Swift Package Manager project that provides comp
 ### Three-Target Structure
 
 1. **SwiftChatCompletionsMacros** (library target) - Public API that users import
-   - `Macros.swift` - `@Tool`, `@Generable`, `@Guide` macro declarations
-   - `Protocols.swift` - `Generable` and `Tool` protocols
+   - `Macros.swift` - `@ChatCompletionsTool`, `@ChatCompletionsToolArguments`, `@ChatCompletionsToolGuide` macro declarations
+   - `Protocols.swift` - `ChatCompletionsToolArguments` and `ChatCompletionsTool` protocols
    - `Types.swift` - `JSONSchemaValue`, `ToolDefinition`, `ToolOutput`, `GuideConstraint`
 
 2. **SwiftChatCompletionsMacrosPlugin** (macro target) - Compiler plugin
@@ -34,8 +34,9 @@ SwiftChatCompletionsMacros is a Swift Package Manager project that provides comp
 ### Key Design Decisions
 
 - **JSON Schema at compile time**: Macros generate `JSONSchemaValue` enum constructors. The enum's `Encodable` conformance handles JSON serialization at runtime. No reflection or mirrors.
-- **@Guide is a marker macro**: Generates no code itself. `@Generable` reads `@Guide` attributes from sibling properties during expansion.
-- **@Tool dispatches by declaration kind**: Handles structs via MemberMacro + ExtensionMacro. PeerMacro is available for future function support.
+- **`@ChatCompletionsToolGuide` is a marker macro**: Generates no code itself. `@ChatCompletionsToolArguments` reads `@ChatCompletionsToolGuide` attributes from sibling properties during expansion.
+- **`@ChatCompletionsTool` dispatches by declaration kind**: Handles structs via MemberMacro + ExtensionMacro. PeerMacro is available for future function support.
+- **Conflict-free naming**: The `ChatCompletionsTool*` prefix avoids naming collisions with Apple's FoundationModels (`@Tool`, `@Generable`, `@Guide`).
 
 ### Type-to-Schema Mapping
 
@@ -47,7 +48,7 @@ SwiftChatCompletionsMacros is a Swift Package Manager project that provides comp
 | `Bool` | `{"type": "boolean"}` |
 | `T?` | Same schema, excluded from `required` |
 | `[T]` | `{"type": "array", "items": ...}` |
-| Nested `@Generable` | Delegates to nested type's `jsonSchema` |
+| Nested `@ChatCompletionsToolArguments` | Delegates to nested type's `jsonSchema` |
 
 ## Dependencies
 
@@ -63,8 +64,8 @@ SwiftChatCompletionsMacros is a Swift Package Manager project that provides comp
 ```
 Sources/
   SwiftChatCompletionsMacros/       # Public API
-    Macros.swift                    # @Tool, @Generable, @Guide declarations
-    Protocols.swift                 # Generable, Tool protocols
+    Macros.swift                    # @ChatCompletionsTool, @ChatCompletionsToolArguments, @ChatCompletionsToolGuide declarations
+    Protocols.swift                 # ChatCompletionsToolArguments, ChatCompletionsTool protocols
     Types.swift                     # JSONSchemaValue, ToolDefinition, etc.
   SwiftChatCompletionsMacrosPlugin/ # Compiler plugin
     Plugin.swift                    # Entry point
@@ -81,4 +82,4 @@ Tests/
 
 - **Macro expansion tests** use `assertMacroExpansion` from SwiftSyntaxMacrosTestSupport (XCTest)
 - **Runtime type tests** use Swift Testing framework (`@Test`, `#expect`)
-- Tests cover: primitive types, optionals, arrays, nested types, `@Guide` descriptions/constraints, error diagnostics, JSON encoding
+- Tests cover: primitive types, optionals, arrays, nested types, `@ChatCompletionsToolGuide` descriptions/constraints, error diagnostics, JSON encoding

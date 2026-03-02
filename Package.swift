@@ -44,5 +44,6 @@ let package = Package(
 				.product(name: "SwiftSyntaxMacrosTestSupport", package: "swift-syntax"),
 			]
 		),
-	]
+	],
+	swiftLanguageModes: [.v6]
 )

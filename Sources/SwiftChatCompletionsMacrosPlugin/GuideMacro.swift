@@ -1,9 +1,9 @@
 import SwiftSyntax
 import SwiftSyntaxMacros
 
-/// `@Guide` is a marker macro. It generates no code itself.
-/// `@Generable` reads `@Guide` attributes from sibling properties
-/// during its expansion to enrich the generated JSON Schema.
+/// `@ChatCompletionsToolGuide` is a marker macro. It generates no code itself.
+/// `@ChatCompletionsToolArguments` reads `@ChatCompletionsToolGuide` attributes
+/// from sibling properties during its expansion to enrich the generated JSON Schema.
 public struct GuideMacro: PeerMacro {
 	public static func expansion(
 		of node: AttributeSyntax,

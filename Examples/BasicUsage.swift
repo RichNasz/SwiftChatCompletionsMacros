@@ -7,29 +7,29 @@
 
 import SwiftChatCompletionsMacros
 
-// MARK: - Define Structured Arguments with @Generable
+// MARK: - Define Structured Arguments with @ChatCompletionsToolArguments
 
-/// Use @Generable to define a struct whose properties map to a JSON Schema.
+/// Use @ChatCompletionsToolArguments to define a struct whose properties map to a JSON Schema.
 /// Each stored property becomes a schema property. Optional properties are
 /// excluded from the "required" array.
-@Generable
+@ChatCompletionsToolArguments
 struct WeatherQuery {
-	@Guide(description: "The city to get weather for")
+	@ChatCompletionsToolGuide(description: "The city to get weather for")
 	var location: String
 
-	@Guide(description: "Temperature unit", .anyOf(["celsius", "fahrenheit"]))
+	@ChatCompletionsToolGuide(description: "Temperature unit", .anyOf(["celsius", "fahrenheit"]))
 	var unit: String?
 }
 
-// MARK: - Define a Tool with @Tool
+// MARK: - Define a Tool with @ChatCompletionsTool
 
-/// Use @Tool on a struct to generate an OpenAI-compatible tool definition.
+/// Use @ChatCompletionsTool on a struct to generate an OpenAI-compatible tool definition.
 /// The struct needs:
-/// 1. A nested `Arguments` type (or typealias) conforming to `Generable`
+/// 1. A nested `Arguments` type (or typealias) conforming to `ChatCompletionsToolArguments`
 /// 2. A `call(arguments:)` method returning `ToolOutput`
 
 /// Get the current weather for a location.
-@Tool
+@ChatCompletionsTool
 struct GetWeather {
 	typealias Arguments = WeatherQuery
 
@@ -79,23 +79,23 @@ func example() throws {
 	print(json)
 }
 
-// MARK: - Nested @Generable Types
+// MARK: - Nested @ChatCompletionsToolArguments Types
 
-@Generable
+@ChatCompletionsToolArguments
 struct Address {
-	@Guide(description: "Street address")
+	@ChatCompletionsToolGuide(description: "Street address")
 	var street: String
 
-	@Guide(description: "City name")
+	@ChatCompletionsToolGuide(description: "City name")
 	var city: String
 
-	@Guide(description: "ZIP code")
+	@ChatCompletionsToolGuide(description: "ZIP code")
 	var zip: String
 }
 
-@Generable
+@ChatCompletionsToolArguments
 struct ShippingRequest {
-	@Guide(description: "Customer full name")
+	@ChatCompletionsToolGuide(description: "Customer full name")
 	var name: String
 
 	var address: Address
@@ -106,14 +106,14 @@ struct ShippingRequest {
 // MARK: - Multiple Tools
 
 /// Search the web for information.
-@Tool
+@ChatCompletionsTool
 struct SearchWeb {
-	@Generable
+	@ChatCompletionsToolArguments
 	struct Arguments {
-		@Guide(description: "The search query")
+		@ChatCompletionsToolGuide(description: "The search query")
 		var query: String
 
-		@Guide(description: "Maximum number of results", .range(1...10))
+		@ChatCompletionsToolGuide(description: "Maximum number of results", .range(1...10))
 		var maxResults: Int
 	}
 
@@ -123,17 +123,17 @@ struct SearchWeb {
 }
 
 /// Send an email to a recipient.
-@Tool
+@ChatCompletionsTool
 struct SendEmail {
-	@Generable
+	@ChatCompletionsToolArguments
 	struct Arguments {
-		@Guide(description: "Recipient email address")
+		@ChatCompletionsToolGuide(description: "Recipient email address")
 		var to: String
 
-		@Guide(description: "Email subject line")
+		@ChatCompletionsToolGuide(description: "Email subject line")
 		var subject: String
 
-		@Guide(description: "Email body text")
+		@ChatCompletionsToolGuide(description: "Email body text")
 		var body: String
 	}
 

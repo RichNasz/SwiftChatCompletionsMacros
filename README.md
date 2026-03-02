@@ -6,15 +6,15 @@
 [![Platform](https://img.shields.io/badge/Platform-macOS%2013%20%7C%20iOS%2016-lightgrey.svg)](Package.swift)
 [![Built with Claude Code](https://img.shields.io/badge/Built%20with-Claude%20Code-blueviolet?logo=claude)](https://claude.ai/code)
 
-Swift macros that bring Apple FoundationModels tool-calling style (`@Tool`, `@Generable`, `@Guide`) to any OpenAI-compatible `/chat/completions` endpoint. Generates OpenAI-compatible JSON Schema at compile time -- zero runtime overhead, excellent diagnostics, fully type-safe.
+Swift macros that generate OpenAI-compatible JSON Schema at compile time -- zero runtime overhead, zero naming conflicts with Apple FoundationModels, fully type-safe.
 
 ## Overview
 
-SwiftChatCompletionsMacros provides three macros that generate OpenAI-compatible tool definitions at compile time:
+SwiftChatCompletionsMacros provides three macros for defining OpenAI-compatible tool definitions at compile time:
 
-- **`@Generable`** -- Generates a JSON Schema for a struct's properties
-- **`@Tool`** -- Generates an OpenAI-compatible tool definition
-- **`@Guide`** -- Adds descriptions and constraints to property schemas
+- **`@ChatCompletionsToolArguments`** -- Generates a JSON Schema for a struct's properties
+- **`@ChatCompletionsTool`** -- Generates an OpenAI-compatible tool definition
+- **`@ChatCompletionsToolGuide`** -- Adds descriptions and constraints to property schemas
 
 ## Quick Start
 
@@ -24,7 +24,7 @@ Add SwiftChatCompletionsMacros to your `Package.swift`:
 
 ```swift
 dependencies: [
-    .package(url: "https://github.com/rnaszcyniec/SwiftChatCompletionsMacros.git", from: "0.1.0")
+    .package(url: "https://github.com/RichNasz/SwiftChatCompletionsMacros.git", from: "0.1.0")
 ]
 ```
 
@@ -43,18 +43,18 @@ Then add it as a dependency to your target:
 import SwiftChatCompletionsMacros
 
 // Define a structured type for tool arguments
-@Generable
+@ChatCompletionsToolArguments
 struct WeatherQuery {
-    @Guide(description: "The city to get weather for")
+    @ChatCompletionsToolGuide(description: "The city to get weather for")
     var location: String
 
-    @Guide(description: "Temperature unit", .anyOf(["celsius", "fahrenheit"]))
+    @ChatCompletionsToolGuide(description: "Temperature unit", .anyOf(["celsius", "fahrenheit"]))
     var unit: String?
 }
 
 // Define a tool
 /// Get the current weather for a location.
-@Tool
+@ChatCompletionsTool
 struct GetWeather {
     typealias Arguments = WeatherQuery
 
@@ -70,6 +70,42 @@ let jsonData = try JSONEncoder().encode(definition)
 // Produces: {"type":"function","function":{"name":"get_weather","description":"Get the current weather for a location.","parameters":{"type":"object","properties":{"location":{"type":"string","description":"The city to get weather for"},"unit":{"type":"string","description":"Temperature unit","enum":["celsius","fahrenheit"]}},"required":["location"],"additionalProperties":false}}}
 ```
 
+## How It Works
+
+`@ChatCompletionsToolArguments` expands your struct at compile time, generating a `jsonSchema` property and protocol conformances. No runtime reflection or mirrors.
+
+**You write:**
+
+```swift
+@ChatCompletionsToolArguments
+struct WeatherQuery {
+    @ChatCompletionsToolGuide(description: "The city name")
+    var location: String
+    var unit: String?
+}
+```
+
+**The macro generates:**
+
+```swift
+struct WeatherQuery {
+    var location: String
+    var unit: String?
+
+    public static var jsonSchema: JSONSchemaValue {
+        .object(
+            properties: [
+                ("location", .string(description: "The city name")),
+                ("unit", .string())
+            ],
+            required: ["location"]
+        )
+    }
+}
+
+extension WeatherQuery: ChatCompletionsToolArguments, Codable, Sendable {}
+```
+
 ## Supported Types
 
 | Swift Type | JSON Schema | Required? |
@@ -80,20 +116,20 @@ let jsonData = try JSONEncoder().encode(definition)
 | `Bool` | `{"type": "boolean"}` | Yes |
 | `T?` | Same as `T` | No |
 | `[T]` | `{"type": "array", "items": ...}` | Yes |
-| Nested `@Generable` | `{"type": "object", ...}` | Yes |
+| Nested `@ChatCompletionsToolArguments` | `{"type": "object", ...}` | Yes |
 
-## `@Guide` Constraints
+## `@ChatCompletionsToolGuide` Constraints
 
 ```swift
-@Generable
+@ChatCompletionsToolArguments
 struct SearchQuery {
-    @Guide(description: "Search text")
+    @ChatCompletionsToolGuide(description: "Search text")
     var query: String
 
-    @Guide(description: "Max results", .range(1...100))
+    @ChatCompletionsToolGuide(description: "Max results", .range(1...100))
     var limit: Int
 
-    @Guide(description: "Sort order", .anyOf(["relevance", "date", "popularity"]))
+    @ChatCompletionsToolGuide(description: "Sort order", .anyOf(["relevance", "date", "popularity"]))
     var sortBy: String?
 }
 ```
@@ -105,6 +141,12 @@ Available constraints:
 - `.count(Int)` -- Exact array item count
 - `.minimumCount(Int)` -- Minimum array item count
 - `.maximumCount(Int)` -- Maximum array item count
+
+## Designed for SwiftChatCompletionsDSL
+
+SwiftChatCompletionsMacros is the compile-time companion to [SwiftChatCompletionsDSL](https://github.com/RichNasz/SwiftChatCompletionsDSL). Use the DSL to make requests and this package to define your tools -- they work together seamlessly.
+
+The `@ChatCompletionsTool` / `@ChatCompletionsToolArguments` / `@ChatCompletionsToolGuide` names are deliberately chosen to avoid conflicts with Apple's FoundationModels framework (`@Tool`, `@Generable`, `@Guide`). You can import both packages in the same project with zero naming collisions.
 
 ## Requirements
 

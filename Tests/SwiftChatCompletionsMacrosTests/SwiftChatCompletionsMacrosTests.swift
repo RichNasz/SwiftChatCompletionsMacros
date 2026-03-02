@@ -6,13 +6,13 @@ import XCTest
 import SwiftChatCompletionsMacrosPlugin
 
 let testMacros: [String: any Macro.Type] = [
-	"Generable": GenerableMacro.self,
-	"Tool": ToolMacro.self,
-	"Guide": GuideMacro.self,
+	"ChatCompletionsToolArguments": GenerableMacro.self,
+	"ChatCompletionsTool": ToolMacro.self,
+	"ChatCompletionsToolGuide": GuideMacro.self,
 ]
 #endif
 
-// MARK: - @Generable Macro Expansion Tests
+// MARK: - @ChatCompletionsToolArguments Macro Expansion Tests
 
 final class GenerableMacroTests: XCTestCase {
 
@@ -21,7 +21,7 @@ final class GenerableMacroTests: XCTestCase {
 	func testGenerableWithPrimitiveTypes() throws {
 		assertMacroExpansion(
 			"""
-			@Generable
+			@ChatCompletionsToolArguments
 			struct Query {
 				var name: String
 				var age: Int
@@ -44,7 +44,7 @@ final class GenerableMacroTests: XCTestCase {
 			    }
 			}
 
-			extension Query: Generable, Codable, Sendable {
+			extension Query: ChatCompletionsToolArguments, Codable, Sendable {
 			}
 			""",
 			macros: testMacros
@@ -54,7 +54,7 @@ final class GenerableMacroTests: XCTestCase {
 	func testGenerableWithOptionalProperty() throws {
 		assertMacroExpansion(
 			"""
-			@Generable
+			@ChatCompletionsToolArguments
 			struct Query {
 				var name: String
 				var nickname: String?
@@ -73,7 +73,7 @@ final class GenerableMacroTests: XCTestCase {
 			    }
 			}
 
-			extension Query: Generable, Codable, Sendable {
+			extension Query: ChatCompletionsToolArguments, Codable, Sendable {
 			}
 			""",
 			macros: testMacros
@@ -83,9 +83,9 @@ final class GenerableMacroTests: XCTestCase {
 	func testGenerableWithGuideDescription() throws {
 		assertMacroExpansion(
 			"""
-			@Generable
+			@ChatCompletionsToolArguments
 			struct Query {
-				@Guide(description: "The city name")
+				@ChatCompletionsToolGuide(description: "The city name")
 				var location: String
 			}
 			""",
@@ -101,7 +101,7 @@ final class GenerableMacroTests: XCTestCase {
 			    }
 			}
 
-			extension Query: Generable, Codable, Sendable {
+			extension Query: ChatCompletionsToolArguments, Codable, Sendable {
 			}
 			""",
 			macros: testMacros
@@ -111,7 +111,7 @@ final class GenerableMacroTests: XCTestCase {
 	func testGenerableWithArrayType() throws {
 		assertMacroExpansion(
 			"""
-			@Generable
+			@ChatCompletionsToolArguments
 			struct Query {
 				var tags: [String]
 			}
@@ -128,7 +128,7 @@ final class GenerableMacroTests: XCTestCase {
 			    }
 			}
 
-			extension Query: Generable, Codable, Sendable {
+			extension Query: ChatCompletionsToolArguments, Codable, Sendable {
 			}
 			""",
 			macros: testMacros
@@ -138,7 +138,7 @@ final class GenerableMacroTests: XCTestCase {
 	func testGenerableOnNonStructEmitsError() throws {
 		assertMacroExpansion(
 			"""
-			@Generable
+			@ChatCompletionsToolArguments
 			class Query {
 				var name: String = ""
 			}
@@ -150,7 +150,7 @@ final class GenerableMacroTests: XCTestCase {
 			""",
 			diagnostics: [
 				DiagnosticSpec(
-					message: "@Generable can only be applied to structs",
+					message: "@ChatCompletionsToolArguments can only be applied to structs",
 					line: 1,
 					column: 1
 				)
@@ -162,9 +162,9 @@ final class GenerableMacroTests: XCTestCase {
 	func testGenerableWithGuideEnumConstraint() throws {
 		assertMacroExpansion(
 			"""
-			@Generable
+			@ChatCompletionsToolArguments
 			struct Query {
-				@Guide(description: "Temperature unit", .anyOf(["celsius", "fahrenheit"]))
+				@ChatCompletionsToolGuide(description: "Temperature unit", .anyOf(["celsius", "fahrenheit"]))
 				var unit: String
 			}
 			""",
@@ -180,7 +180,7 @@ final class GenerableMacroTests: XCTestCase {
 			    }
 			}
 
-			extension Query: Generable, Codable, Sendable {
+			extension Query: ChatCompletionsToolArguments, Codable, Sendable {
 			}
 			""",
 			macros: testMacros
@@ -190,7 +190,7 @@ final class GenerableMacroTests: XCTestCase {
 	func testGenerableWithNestedGenerable() throws {
 		assertMacroExpansion(
 			"""
-			@Generable
+			@ChatCompletionsToolArguments
 			struct Outer {
 				var inner: InnerType
 			}
@@ -207,7 +207,7 @@ final class GenerableMacroTests: XCTestCase {
 			    }
 			}
 
-			extension Outer: Generable, Codable, Sendable {
+			extension Outer: ChatCompletionsToolArguments, Codable, Sendable {
 			}
 			""",
 			macros: testMacros
@@ -221,7 +221,7 @@ final class GenerableMacroTests: XCTestCase {
 	#endif
 }
 
-// MARK: - @Tool Macro Expansion Tests
+// MARK: - @ChatCompletionsTool Macro Expansion Tests
 
 final class ToolMacroTests: XCTestCase {
 
@@ -231,9 +231,9 @@ final class ToolMacroTests: XCTestCase {
 		assertMacroExpansion(
 			"""
 			/// Get the current weather for a location.
-			@Tool
+			@ChatCompletionsTool
 			struct GetWeather {
-				@Generable
+				@ChatCompletionsToolArguments
 				struct Arguments {
 					var location: String
 				}
@@ -274,10 +274,10 @@ final class ToolMacroTests: XCTestCase {
 			    }
 			}
 
-			extension GetWeather.Arguments: Generable, Codable, Sendable {
+			extension GetWeather.Arguments: ChatCompletionsToolArguments, Codable, Sendable {
 			}
 
-			extension GetWeather: Tool {
+			extension GetWeather: ChatCompletionsTool {
 			}
 			""",
 			macros: testMacros
@@ -287,7 +287,7 @@ final class ToolMacroTests: XCTestCase {
 	func testToolOnNonStructEmitsError() throws {
 		assertMacroExpansion(
 			"""
-			@Tool
+			@ChatCompletionsTool
 			class MyTool {
 			}
 			""",
@@ -297,7 +297,7 @@ final class ToolMacroTests: XCTestCase {
 			""",
 			diagnostics: [
 				DiagnosticSpec(
-					message: "@Tool can only be applied to structs",
+					message: "@ChatCompletionsTool can only be applied to structs",
 					line: 1,
 					column: 1
 				)
@@ -310,9 +310,9 @@ final class ToolMacroTests: XCTestCase {
 		assertMacroExpansion(
 			"""
 			/// Search the web.
-			@Tool
+			@ChatCompletionsTool
 			struct SearchWebResults {
-				@Generable
+				@ChatCompletionsToolArguments
 				struct Arguments {
 					var query: String
 				}
@@ -353,10 +353,10 @@ final class ToolMacroTests: XCTestCase {
 			    }
 			}
 
-			extension SearchWebResults.Arguments: Generable, Codable, Sendable {
+			extension SearchWebResults.Arguments: ChatCompletionsToolArguments, Codable, Sendable {
 			}
 
-			extension SearchWebResults: Tool {
+			extension SearchWebResults: ChatCompletionsTool {
 			}
 			""",
 			macros: testMacros
@@ -370,7 +370,7 @@ final class ToolMacroTests: XCTestCase {
 	#endif
 }
 
-// MARK: - @Guide Macro Expansion Tests
+// MARK: - @ChatCompletionsToolGuide Macro Expansion Tests
 
 final class GuideMacroTests: XCTestCase {
 
@@ -379,7 +379,7 @@ final class GuideMacroTests: XCTestCase {
 	func testGuideIsMarkerMacro() throws {
 		assertMacroExpansion(
 			"""
-			@Guide(description: "A test description")
+			@ChatCompletionsToolGuide(description: "A test description")
 			var name: String
 			""",
 			expandedSource: """

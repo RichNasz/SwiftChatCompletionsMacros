@@ -1,13 +1,19 @@
 /// JSON Schema value representation for OpenAI-compatible tool definitions.
 ///
-/// Constructed at compile time by `@Generable` macro expansion. Encodes to
+/// Constructed at compile time by `@ChatCompletionsToolArguments` macro expansion. Encodes to
 /// OpenAI-compatible JSON Schema at runtime via `Encodable` conformance.
 public indirect enum JSONSchemaValue: Sendable, Equatable {
+	/// A JSON Schema `"type": "object"` with named properties and a required list.
 	case object(properties: [(String, JSONSchemaValue)], required: [String])
+	/// A JSON Schema `"type": "array"` with a single items schema.
 	case array(items: JSONSchemaValue)
+	/// A JSON Schema `"type": "string"` with optional description and enum constraint.
 	case string(description: String? = nil, enumValues: [String]? = nil)
+	/// A JSON Schema `"type": "integer"` with optional description and range.
 	case integer(description: String? = nil, minimum: Int? = nil, maximum: Int? = nil)
+	/// A JSON Schema `"type": "number"` with optional description and range.
 	case number(description: String? = nil, minimum: Double? = nil, maximum: Double? = nil)
+	/// A JSON Schema `"type": "boolean"` with optional description.
 	case boolean(description: String? = nil)
 
 	public static func == (lhs: JSONSchemaValue, rhs: JSONSchemaValue) -> Bool {
@@ -111,8 +117,11 @@ public struct ToolOutput: Sendable, Equatable {
 /// An OpenAI-compatible tool definition that encodes to the
 /// `{"type":"function","function":{...}}` format.
 public struct ToolDefinition: Sendable, Equatable {
+	/// The snake_case tool name sent to the LLM.
 	public let name: String
+	/// A human-readable description of what the tool does.
 	public let description: String
+	/// The JSON Schema describing the tool's input parameters.
 	public let parameters: JSONSchemaValue
 
 	public init(name: String, description: String, parameters: JSONSchemaValue) {
@@ -144,7 +153,7 @@ extension ToolDefinition: Encodable {
 	}
 }
 
-/// Constraint types used by `@Guide` to add JSON Schema constraints.
+/// Constraint types used by `@ChatCompletionsToolGuide` to add JSON Schema constraints.
 public enum GuideConstraint: Sendable {
 	/// Restricts a string property to specific allowed values.
 	case anyOf([String])

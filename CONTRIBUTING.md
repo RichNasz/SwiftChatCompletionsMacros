@@ -63,14 +63,14 @@ All commits must follow the [Conventional Commits](https://www.conventionalcommi
 
 ### Scopes
 
-`generable`, `tool`, `guide`, `types`, `plugin`, `tests`, `docs`
+`arguments`, `tool`, `guide`, `types`, `plugin`, `tests`, `docs`
 
 ### Examples
 
 ```
-feat(generable): add support for enum types
+feat(arguments): add support for enum types
 fix(tool): correct snake_case conversion for acronyms
-test(generable): add expansion test for nested optional arrays
+test(arguments): add expansion test for nested optional arrays
 docs(docs): update README Quick Start example
 ```
 

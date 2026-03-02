@@ -34,9 +34,9 @@ All commits must follow the [Conventional Commits](https://www.conventionalcommi
 
 | Scope | Applies to |
 |---|---|
-| `generable` | `@Generable` macro declaration or implementation |
-| `tool` | `@Tool` macro declaration or implementation |
-| `guide` | `@Guide` macro declaration or implementation |
+| `arguments` | `@ChatCompletionsToolArguments` macro declaration or implementation |
+| `tool` | `@ChatCompletionsTool` macro declaration or implementation |
+| `guide` | `@ChatCompletionsToolGuide` macro declaration or implementation |
 | `types` | `JSONSchemaValue`, `ToolDefinition`, `ToolOutput`, `GuideConstraint` |
 | `plugin` | `Plugin.swift`, CompilerPlugin entry point |
 | `tests` | Test files |
@@ -45,9 +45,9 @@ All commits must follow the [Conventional Commits](https://www.conventionalcommi
 ### Examples
 
 ```
-feat(generable): add support for enum types
+feat(arguments): add support for enum types
 fix(tool): correct snake_case conversion for acronyms
-test(generable): add expansion test for nested optional arrays
+test(arguments): add expansion test for nested optional arrays
 docs(docs): update README Quick Start example
 spec(docs): expand DocumentationSpec with badge format rules
 refactor(plugin): extract shared type-mapping logic
@@ -69,7 +69,7 @@ Co-Authored-By: Claude <noreply@anthropic.com>
 Follow the same conventional commit format as commit messages:
 
 ```
-feat(generable): add support for enum types
+feat(arguments): add support for enum types
 ```
 
 ### Description Template
