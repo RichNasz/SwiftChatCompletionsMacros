@@ -87,39 +87,37 @@ Requires `associatedtype Arguments: Generable`, `name`, `description`, `toolDefi
 
 ---
 
-## HOW
+## WHY
 
-### Macro Roles
+### Why Compile-Time Schema Generation
 
-- `@Generable`: `MemberMacro` (generates `jsonSchema`), `ExtensionMacro` (adds conformances)
-- `@Tool`: `MemberMacro` (generates `name`, `description`, `toolDefinition`), `ExtensionMacro` (adds `Tool` conformance), `PeerMacro` (reserved for function mode)
-- `@Guide`: `PeerMacro` (marker, returns empty array)
+JSON Schema generation happens entirely at compile time via Swift macros. The generated code constructs `JSONSchemaValue` enum values directly — no runtime reflection, no `Mirror`, no dynamic type inspection. This provides:
 
-### Type-to-Schema Mapping (in GenerableMacro)
+- Zero runtime overhead for schema construction
+- Compile-time error diagnostics for unsupported types
+- Full type safety with no possibility of runtime schema/type mismatches
 
-1. Parse stored properties from struct declaration
-2. For each property, check type annotation:
-   - `String` -> `.string()`
-   - `Int` -> `.integer()`
-   - `Double` -> `.number()`
-   - `Bool` -> `.boolean()`
-   - `[T]` -> `.array(items: <recursive>)`
-   - Other -> `TypeName.jsonSchema` (nested Generable)
-3. Check for `@Guide` attribute on the property's variable declaration
-4. Extract `description` string literal and optional constraint
-5. Apply description/constraints to the schema expression
+### Why `@Guide` Is a Marker Macro
 
-### @Guide Reading (in GenerableMacro)
+`@Guide` is declared as a `PeerMacro` but generates no code. Its attributes are read by `@Generable` during expansion. This avoids expansion ordering conflicts — if `@Guide` generated code that `@Generable` consumed, the compiler would need to guarantee `@Guide` expands first, which Swift macros do not guarantee for sibling declarations.
 
-The `@Generable` macro reads `@Guide` from sibling properties during member expansion:
-1. Iterate `AttributeListSyntax` on each `VariableDeclSyntax`
-2. Find `AttributeSyntax` where `attributeName` is "Guide"
-3. Parse `LabeledExprListSyntax` for `description:` and constraint arguments
+### Why Struct-Only Restriction
 
-### PascalCase to snake_case (in ToolMacro)
+Both `@Generable` and `@Tool` require structs because:
 
-Iterate characters. Before each uppercase character (except first), insert underscore. Lowercase all.
+- JSON Schema `"type": "object"` maps cleanly to Swift structs (named properties with fixed types)
+- Structs provide value semantics matching JSON's data model
+- Classes would introduce inheritance complications not representable in JSON Schema
+- Enums require a different schema pattern (`oneOf`/`enum`) not yet supported
 
-### Doc Comment Extraction (in ToolMacro)
+### Why OpenAI Function-Calling Format
 
-Read `leadingTrivia` from struct declaration. Extract `.docLineComment` pieces. Take first paragraph (up to empty line or parameter documentation).
+The `ToolDefinition` type encodes to `{"type":"function","function":{...}}` — the format specified by OpenAI's Chat Completions API. This format has become a de facto standard adopted by Anthropic, Mistral, Groq, and other providers. Targeting it maximizes compatibility across the ecosystem.
+
+### Why FoundationModels API Naming
+
+The macro names (`@Tool`, `@Generable`, `@Guide`) and protocol shapes mirror Apple's FoundationModels framework (introduced in iOS 26 / macOS 26). This naming parity means:
+
+- Developers familiar with FoundationModels can use this library with near-zero learning curve
+- Code can be migrated between on-device (FoundationModels) and cloud (OpenAI-compatible) with minimal changes
+- The API feels native to the Swift ecosystem rather than being a direct port of OpenAI's Python/JS conventions

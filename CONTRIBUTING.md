@@ -9,7 +9,7 @@ Thank you for your interest in contributing to SwiftChatCompletionsMacros!
 3. Create a new branch for your feature or bug fix
 4. Make your changes
 5. Run the tests: `swift test`
-6. Commit your changes with a clear commit message
+6. Commit your changes using conventional commit format
 7. Push to your fork and submit a pull request
 
 ## Development Setup
@@ -31,22 +31,72 @@ swift build
 swift test
 ```
 
-## Guidelines
+## Commit Conventions
 
-- Follow existing code style and conventions
-- Add tests for new functionality
-- Ensure all tests pass before submitting a PR
-- Keep pull requests focused on a single change
-- Write clear commit messages
+All commits must follow the [Conventional Commits](https://www.conventionalcommits.org/) format:
+
+```
+<type>(<scope>): <subject>
+```
+
+### Types
+
+| Type | Usage |
+|---|---|
+| `feat` | New feature or capability |
+| `fix` | Bug fix |
+| `test` | Adding or updating tests |
+| `docs` | Documentation changes |
+| `spec` | Spec file changes |
+| `refactor` | Code restructuring without behavior change |
+| `chore` | Build, dependencies, CI, tooling |
+
+### Scopes
+
+`generable`, `tool`, `guide`, `types`, `plugin`, `tests`, `docs`
+
+### Examples
+
+```
+feat(generable): add support for enum types
+fix(tool): correct snake_case conversion for acronyms
+test(generable): add expansion test for nested optional arrays
+docs(docs): update README Quick Start example
+```
+
+## AI Attribution
+
+Commits with AI-assisted code must include the following trailer:
+
+```
+Co-Authored-By: Claude <noreply@anthropic.com>
+```
+
+## Pull Request Standards
+
+Use the [PR template](.github/pull_request_template.md) when submitting. PRs should:
+
+- Follow the conventional commit format for the title
+- Include a summary of changes (1-3 bullet points)
+- Have a test plan with checklist items
+- Pass all checks before requesting review
+
+### Review Checklist
+
+- [ ] `swift build` succeeds with no warnings
+- [ ] `swift test` passes all tests
+- [ ] New features have macro expansion tests
+- [ ] Conventional commit format used
+- [ ] Spec files updated if behavior changes
+- [ ] Documentation updated if public API changes
+
+## Code of Conduct
+
+This project follows the Contributor Covenant. See [CODE_OF_CONDUCT.md](CODE_OF_CONDUCT.md).
 
 ## Reporting Issues
 
-If you find a bug or have a feature request, please open an issue on GitHub with:
-
-- A clear description of the problem or feature
-- Steps to reproduce (for bugs)
-- Expected vs actual behavior (for bugs)
-- Your Swift version and platform
+If you find a bug or have a feature request, please open an issue using the appropriate [issue template](.github/ISSUE_TEMPLATE/).
 
 ## License
 
