@@ -38,8 +38,16 @@ SwiftChatCompletionsMacros/
 │   └── SwiftChatCompletionsMacrosTests/
 │       ├── SwiftChatCompletionsMacrosTests.swift  # Macro expansion tests (XCTest)
 │       └── RuntimeTypeTests.swift                 # Runtime type tests (Swift Testing)
-└── Examples/
-    └── BasicUsage.swift                  # Compilable usage examples
+├── Examples/
+│   ├── BasicUsage.swift                  # Compilable usage examples
+│   └── Specs/
+│       ├── RecipeSearchTool-WHAT.md      # Sample WHAT spec for package consumers
+│       └── RecipeSearchTool-HOW.md       # Sample HOW spec for package consumers
+├── docs/
+│   └── SpecDrivenDevelopment.md          # SDD workflow guide (WHAT + HOW + Skill harmony)
+└── skills/
+    └── using-swift-chat-completions-macros/
+        └── SKILL.md                      # Agent Skill for AI coding assistants
 ```
 
 ## Three-Target Architecture
@@ -74,3 +82,5 @@ Tests for both macro expansion correctness and runtime type behavior. Uses two t
 | `CompilerPlugin` entry point | Plugin | Required by macro plugin architecture |
 | Macro expansion tests | Tests | Verifies generated code |
 | Runtime behavior tests | Tests | Verifies encoding, protocol conformance |
+| SDD sample specs (WHAT/HOW) | Examples/Specs/ | Consumer-facing workflow examples |
+| SDD workflow guide | docs/ | Human-facing conceptual documentation |

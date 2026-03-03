@@ -76,6 +76,15 @@ Tests/
   SwiftChatCompletionsMacrosTests/
     SwiftChatCompletionsMacrosTests.swift  # Macro expansion tests
     RuntimeTypeTests.swift                 # Runtime type tests
+Examples/
+  Specs/
+    RecipeSearchTool-WHAT.md              # Sample WHAT spec for package consumers
+    RecipeSearchTool-HOW.md               # Sample HOW spec for package consumers
+docs/
+  SpecDrivenDevelopment.md                # SDD workflow guide (WHAT + HOW + Skill harmony)
+skills/
+  using-swift-chat-completions-macros/
+    SKILL.md                              # Agent Skill for AI coding assistants
 ```
 
 ## Testing Strategy

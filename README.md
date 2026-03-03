@@ -157,6 +157,27 @@ The `@ChatCompletionsTool` / `@ChatCompletionsToolArguments` / `@ChatCompletions
 
 See [CONTRIBUTING.md](CONTRIBUTING.md) for guidelines.
 
+## Agent Skill
+
+This project includes an [Agent Skill](https://agentskills.io) at [`skills/using-swift-chat-completions-macros/SKILL.md`](skills/using-swift-chat-completions-macros/SKILL.md) that gives AI coding assistants package-specific context for using the macros correctly.
+
+**This is entirely optional.** Agent Skills are only useful if you use an AI coding agent that implements the [agentskills.io](https://agentskills.io) specification (Claude Code, Cursor, Gemini CLI, etc.). The macros work the same with or without the skill installed.
+
+### Installing the Skill
+
+Adding SwiftChatCompletionsMacros as an SPM dependency does **not** make the skill available to your agent -- SPM downloads sources into `.build/checkouts/`, which agents don't scan. To install the skill, copy the folder into a location your agent is configured to discover:
+
+```bash
+cp -r .build/checkouts/SwiftChatCompletionsMacros/skills/using-swift-chat-completions-macros \
+      skills/using-swift-chat-completions-macros
+```
+
+This places the skill in your project's `skills/` directory, where compatible agents will find it automatically.
+
+### Spec-Driven Development
+
+If you use AI coding agents, you can pair the Agent Skill with WHAT and HOW specs to define tools before generating code. See the [Spec-Driven Development Guide](docs/SpecDrivenDevelopment.md) for the workflow and [`Examples/Specs/`](Examples/Specs/) for sample specs you can use as templates.
+
 ## License
 
 SwiftChatCompletionsMacros is available under the Apache License 2.0. See [LICENSE](LICENSE) for details.

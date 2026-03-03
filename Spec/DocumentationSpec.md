@@ -13,7 +13,8 @@ The README must contain these sections in this exact order:
 5. **@ChatCompletionsToolGuide Constraints** (H2)
 6. **Requirements** (H2)
 7. **Contributing** (H2)
-8. **License** (H2)
+8. **Agent Skill** (H2)
+9. **License** (H2)
 
 ### Badge Row
 
@@ -140,3 +141,82 @@ Required sections:
 - Summary (1-3 bullet points)
 - Test plan (checklist)
 - Review checklist (tests pass, docs updated, conventional commits)
+
+## Agent Skill
+
+### `skills/using-swift-chat-completions-macros/SKILL.md`
+
+An [Agent Skill](https://agentskills.io) that gives AI coding assistants package-specific context for using SwiftChatCompletionsMacros.
+
+### Required Content
+
+The SKILL.md must include:
+
+- YAML frontmatter with `name` (kebab-case, gerund form) and `description` (third-person, under 1024 chars, includes trigger keywords)
+- Installation snippet (SPM dependency)
+- All three macros: what each does, what it generates, requirements
+- Type-to-Schema mapping table
+- GuideConstraint reference table (constraint, applies to, example)
+- Usage patterns with code examples (inline Arguments, external typealias, nested types)
+- Protocol signatures (`ChatCompletionsToolArguments`, `ChatCompletionsTool`)
+- Using `toolDefinition` (encoding to JSON)
+- Common pitfalls (struct-only, Arguments resolution, call signature, constraint type matching, FoundationModels coexistence, optional handling, doc comment format)
+
+### Constraints
+
+- Body must be under 500 lines
+- No reference files — the API surface fits within the SKILL.md itself
+- Only covers package-specific knowledge; assumes the agent already knows Swift
+
+### README Agent Skill Section
+
+The README's "Agent Skill" section must:
+
+- State that the skill is optional and not required to use the package
+- Note that only agents implementing the [agentskills.io](https://agentskills.io) spec can use skills
+- Explain that adding an SPM dependency does not make the skill discoverable — SPM downloads sources into `.build/checkouts/`, which agents don't scan
+- Provide installation instructions: copy the skill folder into the project's `skills/` directory (or wherever the agent is configured to look)
+- Include a "Spec-Driven Development" subsection linking to `docs/SpecDrivenDevelopment.md` and `Examples/Specs/`
+
+## docs/SpecDrivenDevelopment.md
+
+### Required Sections
+
+1. **What Is Spec-Driven Development?** — Definition and opt-in framing
+2. **The Three Tools** — Subsections for WHAT Specs, HOW Specs, and Agent Skills
+3. **How They Work Together** — Narrative showing the workflow from spec to generated code
+4. **Graceful Degradation** — What works without the Skill, what works without specs
+5. **Getting Started** — Numbered steps (install skill, write WHAT, write HOW, ask agent)
+6. **Example** — Links to sample specs in `Examples/Specs/`
+
+### Constraints
+
+- Must frame SDD as optional, not prescriptive
+- Must not duplicate SKILL.md content; link to it instead
+- Must link to sample specs in `Examples/Specs/`
+- Tone: direct, practical, no methodology evangelism
+
+## Examples/Specs/
+
+### Purpose
+
+Sample WHAT and HOW specs demonstrating how a package consumer would use spec-driven development to build a tool using SwiftChatCompletionsMacros.
+
+### Required Files
+
+- `RecipeSearchTool-WHAT.md` — WHAT spec for a recipe search tool
+- `RecipeSearchTool-HOW.md` — HOW spec for the same tool
+
+### WHAT Spec Requirements
+
+- Must define tool name, description, and arguments table
+- Must include at least one property of each type category: String, Int, Double, Bool, Optional, Array, Nested type
+- Must include at least one constraint from each constraint category (anyOf, range, minimumCount)
+- Must include acceptance criteria as a checklist
+
+### HOW Spec Requirements
+
+- Must reference SwiftChatCompletionsMacros by import name
+- Must name specific macros (`@ChatCompletionsToolArguments`, `@ChatCompletionsTool`, `@ChatCompletionsToolGuide`)
+- Must show expected JSON Schema output shape
+- Must cover component ordering (nested type defined before referencing type)
