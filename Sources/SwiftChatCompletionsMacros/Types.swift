@@ -15,6 +15,8 @@ public indirect enum JSONSchemaValue: Sendable, Equatable {
 	case number(description: String? = nil, minimum: Double? = nil, maximum: Double? = nil)
 	/// A JSON Schema `"type": "boolean"` with optional description.
 	case boolean(description: String? = nil)
+	/// A JSON Schema `"type": "null"`.
+	case null
 
 	public static func == (lhs: JSONSchemaValue, rhs: JSONSchemaValue) -> Bool {
 		switch (lhs, rhs) {
@@ -34,6 +36,8 @@ public indirect enum JSONSchemaValue: Sendable, Equatable {
 			return ld == rd && lmin == rmin && lmax == rmax
 		case let (.boolean(ld), .boolean(rd)):
 			return ld == rd
+		case (.null, .null):
+			return true
 		default:
 			return false
 		}
@@ -84,6 +88,9 @@ extension JSONSchemaValue: Encodable {
 		case let .boolean(description):
 			var dict: [String: AnyCodable] = ["type": AnyCodable("boolean")]
 			if let description { dict["description"] = AnyCodable(description) }
+			try container.encode(dict)
+		case .null:
+			let dict: [String: AnyCodable] = ["type": AnyCodable("null")]
 			try container.encode(dict)
 		}
 	}
