@@ -58,6 +58,14 @@ struct JSONSchemaValueEncodingTests {
 		#expect(json["type"] as? String == "boolean")
 	}
 
+	@Test("Null schema encodes correctly")
+	func nullSchema() throws {
+		let schema = JSONSchemaValue.null
+		let data = try JSONEncoder().encode(schema)
+		let json = try JSONSerialization.jsonObject(with: data) as! [String: Any]
+		#expect(json["type"] as? String == "null")
+	}
+
 	@Test("Array schema encodes correctly")
 	func arraySchema() throws {
 		let schema = JSONSchemaValue.array(items: .string())
@@ -177,5 +185,15 @@ struct JSONSchemaValueEqualityTests {
 			required: ["name"]
 		)
 		#expect(a == b)
+	}
+
+	@Test("Null schemas are equal")
+	func nullEquality() {
+		#expect(JSONSchemaValue.null == JSONSchemaValue.null)
+	}
+
+	@Test("Null is not equal to other types")
+	func nullNotEqualToOtherTypes() {
+		#expect(JSONSchemaValue.null != JSONSchemaValue.string())
 	}
 }
